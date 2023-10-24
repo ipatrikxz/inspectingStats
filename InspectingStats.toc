@@ -1,0 +1,8 @@
+## Title: InspectingStats
+## Author: Palacsinta
+## Version: 1.0
+## Interface: 10107
+## Notes: A brief description of your addon.
+
+InspectingStatsFrames.lua
+InspectingStats.lua
