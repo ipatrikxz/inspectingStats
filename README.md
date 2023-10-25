@@ -9,7 +9,7 @@ WoW Inspecting Stats is an addon for World of Warcraft that allows you to inspec
 
 ## Installation
 
-1. Download the latest release of the addon from the [Releases] page.
+1. Download the Zip.
 2. Extract the contents of the ZIP archive into your World of Warcraft `_retail_/Interface/AddOns` directory.
 3. Start World of Warcraft and make sure to enable the addon in the in-game AddOns menu.
 
