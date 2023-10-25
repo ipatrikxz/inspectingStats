@@ -5,6 +5,7 @@ WoW Inspecting Stats is an addon for World of Warcraft that allows you to inspec
 ## Features
 
 - View detailed stats such as Mastery, Critical Strike, Haste, and Versatility for the inspected player.
+- Open multiple windows for comparing stats.
 
 ## Installation
 
@@ -18,7 +19,6 @@ WoW Inspecting Stats is an addon for World of Warcraft that allows you to inspec
 2. Click on the "Show Stats" button in the Inspect frame.
 3. The addon will display the player's stats in a separate UI window.
 
-## License
+## Disclaimer
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
+!! The displayed stats may not be 100% accurate since we are calculating them based solely on the equipped gear !!
