@@ -1,61 +1,54 @@
-AN, ANS = ...;
-
-local MyInspectButton = CreateFrame("Button", "MyInspectButton", InspectPaperDollFrame, "UIPanelButtonTemplate")
-MyInspectButton:SetSize(100, 30)
-MyInspectButton:SetText("Inspect Stats")
-MyInspectButton:SetPoint("LEFT", InspectPaperDollFrame, 0, 0)
-MyInspectButton:Hide() -- Hide the button initially
-
-MyInspectButton:SetScript("OnClick", function(self)
-    -- Handle button click event
-    print("My Button Clicked!")
-end)
-
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("INSPECT_READY")
-
-frame:SetScript("OnEvent", function(self, event, unitID)
-    if event == "INSPECT_READY" then
-        MyInspectButton:Show() -- Show the button when inspection is ready
-    end
-end)
+local name, addon = ...;
 
 -- Function to display the inspected player's stats
-function ANS:IS_InspectStats()
-    if not self.frame then
-        ANS:IS_CreateFrame()
+function addon:InspectStats()
+    if not self then
+        addon:CreateFrame()
     else
-        self:Destructor()
-        ANS:IS_CreateFrame()
+       --[[  self:Destructor() ]]
+        addon:CreateFrame()
     end
 end
 
 -- Main Function for setting up the UI
-function ANS:IS_CreateFrame()
+function addon:CreateFrame()
     self:InitFrame()
-    self:InitFrameButtons()
     self:InitStatsText()
 end
 
-function ANS:InitFrame()
-    self.frame = CreateFrame("Frame", "MyInspectStatsFrame", UIParent, 'BasicFrameTemplateWithInset')
-    self.frame:SetSize(150, 120)
-    self.frame:SetPoint("CENTER", 0, 0)
+function addon:InitFrame()
+    local frameSizeX = 150
+    local frameSizeY = 120
+    local frameSpawnOffsetY = 0
+    local frameSpawnOffsetX = 160
+
+    self.frame = CreateFrame("Frame", "MyInspectStatsFrame", InspectPaperDollFrame, 'BasicFrameTemplateWithInset')
+    self.frame:SetSize(frameSizeX, frameSizeY)
+    self.frame:SetPoint("BOTTOMRIGHT", frameSpawnOffsetX, frameSpawnOffsetY)
     self.frame:SetMovable(true)
     self.frame:SetScript("OnMouseDown",self.frame.StartMoving)
     self.frame:SetScript("OnMouseUp",self.frame.StopMovingOrSizing)
-end
 
-function ANS:InitFrameButtons()
     local closeButton = CreateFrame("Button", nil, self.frame, "UIPanelCloseButton")
     closeButton:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT")
     closeButton:SetScript("OnClick", function(self)
-        self:Destructor()
+        print('asd')
     end)
 end
 
-function ANS:InitStatsText()
-    local stats = ANS.CalculateStats(self)
+function addon:InitStatsText()
+    local stats = addon.CalculateStats(self)
+    local textOffsetY = -10  -- Y offset
+    local textOffsetYGap = 20 -- Increments the textOffsetY
+    local initialTextOffsetY = -25 -- The list starts from here
+
+    -- Define a table of stat labels and their names
+    local statLabels = {
+        { name = "Crit", label = "Crit" },
+        { name = "Haste", label = "Haste" },
+        { name = "Mastery", label = "Mastery" },
+        { name = "Vers", label = "Versatility" },
+    }
 
     -- Create text label for target name
     local labelTargetName = self.frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -63,23 +56,18 @@ function ANS:InitStatsText()
     labelTargetName:SetText(stats.targetName)
 
     -- Create text labels to display stats
-    local labelCrit = self.frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    labelCrit:SetPoint("TOPLEFT", 10, -30)
-    labelCrit:SetText("Crit: " .. (stats.Crit or 0))
-
-    local labelHaste = self.frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    labelHaste:SetPoint("TOPLEFT", 10, -50)
-    labelHaste:SetText("Haste: " .. (stats.Haste or 0))
-
-    local labelMastery = self.frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    labelMastery:SetPoint("TOPLEFT", 10, -70)
-    labelMastery:SetText("Mastery: " .. (stats.Mastery or 0))
-
-    local labelVers = self.frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    labelVers:SetPoint("TOPLEFT", 10, -90)
-    labelVers:SetText("Versatility: " .. (stats.Vers or 0))
+    for _, stat in ipairs(statLabels) do
+        local label = self.frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        label:SetPoint("TOPLEFT", self.frame, 15, initialTextOffsetY + textOffsetY)
+        label:SetText(stat.label .. ": " .. (stats[stat.name] or 0))
+        textOffsetY = textOffsetY - textOffsetYGap
+    end
 end
 
-function ANS:Destructor()
+
+function addon:Destructor()
+    print('Destructor')
+    print(self.isInspecting)
+    addon.isInspecting = false
     self = nil
 end

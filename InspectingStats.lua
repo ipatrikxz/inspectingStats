@@ -1,53 +1,41 @@
-AN, ANS = ...;
+local name, addon = ...;
 
-function ANS:CalculateStats()
+-- returns target's minor stats from equipped gear
+function addon:CalculateStats()
     local unit = "target"
     local targetName = UnitName(unit)
 
-    if targetName then
-        local totalStats = {
-            targetName = targetName,
-            Mastery = 0,
-            Crit = 0,
-            Haste = 0,
-            Vers = 0
-        }
+    local totalStats = {
+        targetName = targetName,
+        Mastery = 0,
+        Crit = 0,
+        Haste = 0,
+        Vers = 0
+    }
 
-        -- Loop through equipped items
-        for i = 1, 19 do
-            local itemLink = GetInventoryItemLink(unit, i)
+    for i = 1, 19 do
+        local itemLink = GetInventoryItemLink(unit, i)
 
-            if itemLink then
-                local item = GetItemStats(itemLink)
+        if itemLink then
+            local item = GetItemStats(itemLink)
 
-                if item then
-                    totalStats.Crit = totalStats.Crit + (item['ITEM_MOD_CRIT_RATING_SHORT'] or 0)
-                    totalStats.Haste = totalStats.Haste + (item['ITEM_MOD_HASTE_RATING_SHORT'] or 0)
-                    totalStats.Mastery = totalStats.Mastery + (item['ITEM_MOD_MASTERY_RATING_SHORT'] or 0)
-                    totalStats.Vers = totalStats.Vers + (item['ITEM_MOD_VERSATILITY'] or 0)
-                end
+            if item then
+                totalStats.Crit = totalStats.Crit + (item['ITEM_MOD_CRIT_RATING_SHORT'] or 0)
+                totalStats.Haste = totalStats.Haste + (item['ITEM_MOD_HASTE_RATING_SHORT'] or 0)
+                totalStats.Mastery = totalStats.Mastery + (item['ITEM_MOD_MASTERY_RATING_SHORT'] or 0)
+                totalStats.Vers = totalStats.Vers + (item['ITEM_MOD_VERSATILITY'] or 0)
             end
         end
-
---[[         print('------------' .. targetName .. '-------------')
-        print('Crit: ' .. totalStats.Crit)
-        print('Haste: ' .. totalStats.Haste)
-        print('Mastery: ' .. totalStats.Mastery)
-        print('Versatility: ' .. totalStats.Vers) ]]
-
-        return totalStats
     end
+
+    return totalStats
 end
 
 -- Function to handle the /stats command
-local function StatsCommandHandler(msg)
+function addon:InitInspectStats()
     if UnitName('target') then
-        ANS:IS_InspectStats()
+        addon:InspectStats()
     else
-        print("/stats Usage: You need to target and inspect ")
+        print("InspectStats: You must inspect a player first.")
     end
 end
-
--- Register the slash command
-SLASH_STATS1 = "/stats"
-SlashCmdList["STATS"] = StatsCommandHandler

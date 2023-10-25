@@ -5,4 +5,5 @@
 ## Notes: A brief description of your addon.
 
 InspectingStatsFrames.lua
+InspectingStatsButton.lua
 InspectingStats.lua
