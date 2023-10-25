@@ -1,5 +1,17 @@
 local AN, ANS = ...;
-UIManager = {}
+UIManager = {
+    statsFrame = {
+        frameCount = 0, -- To keep track of the number of frames
+        maxFrameCount = 2,
+        maxColumns = 3, -- Adjust the number of columns as needed
+        frameSizeX = 150,
+        frameSizeY = 120,
+        spacingX = 10,
+        spacingY = 10,
+        spawnY = 0,
+        spawnX = 160,
+    },
+}
 
 function UIManager:New()
     local newInstance = {}
@@ -8,31 +20,33 @@ function UIManager:New()
     return newInstance
 end
 
-function UIManager:ShowStats()
+function UIManager:ShowStatsFrame()
     self:InitFrame()
     self:InitStatsText()
 end
 
 function UIManager:InitFrame()
-    local frameSizeX = 150
-    local frameSizeY = 120
-    local frameSpawnOffsetY = 0
-    local frameSpawnOffsetX = 160
-
-    -- Frame 
-    self.frame = CreateFrame("Frame", "MyInspectStatsFrame", InspectPaperDollFrame, 'BasicFrameTemplateWithInset')
-    self.frame:SetSize(frameSizeX, frameSizeY)
-    self.frame:SetPoint("BOTTOMRIGHT", frameSpawnOffsetX, frameSpawnOffsetY)
-    self.frame:SetMovable(true)
-    self.frame:SetScript("OnMouseDown", self.frame.StartMoving)
-    self.frame:SetScript("OnMouseUp", self.frame.StopMovingOrSizing)
-
-    -- Close Button
-    local closeButton = CreateFrame("Button", nil, self.frame, "UIPanelCloseButton")
-    closeButton:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT")
-    closeButton:SetScript("OnHide", function()
-        self:HandleCloseStatsWindow()
-    end)
+    if self.statsFrame.frameCount + 1 <= self.statsFrame.maxFrameCount then
+        local currentColumn = self.statsFrame.frameCount % self.statsFrame.maxColumns
+        local currentRow = math.floor(self.statsFrame.frameCount / self.statsFrame.maxColumns)
+    
+        local frameSpawnOffsetX = currentColumn * (self.statsFrame.frameSizeX + self.statsFrame.spacingX)
+        local frameSpawnOffsetY = currentRow * (self.statsFrame.frameSizeY + self.statsFrame.spacingY)
+      
+        -- Stats Frame
+        self.frame = CreateFrame("Frame", "InspectStatsFrame_" .. self.statsFrame.frameCount, InspectPaperDollFrame, 'BasicFrameTemplate')
+        self.frame:SetSize(self.statsFrame.frameSizeX, self.statsFrame.frameSizeY)
+        self.frame:SetPoint("BOTTOMRIGHT", self.statsFrame.spawnX + frameSpawnOffsetX, frameSpawnOffsetY)
+    
+        -- CloseButton
+        self.frame.CloseButton:SetScript("OnClick", function ()
+            self:HandleCloseStatsWindow()
+            self.frame:Hide()
+        end)
+    
+        -- Increment the frame count
+        self.statsFrame.frameCount = self.statsFrame.frameCount + 1
+    end
 end
 
 function UIManager:InitStatsText()
@@ -64,6 +78,9 @@ function UIManager:InitStatsText()
 end
 
 function UIManager:HandleCloseStatsWindow()
+    if self.statsFrame.frameCount - 1 >= 0 then
+        self.statsFrame.frameCount = self.statsFrame.frameCount - 1
+    end
     ANS.inspectInProgress = false
     ANS.currentInspectUnitName = nil
 end
